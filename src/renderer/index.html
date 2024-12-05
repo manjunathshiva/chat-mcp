@@ -783,11 +783,9 @@
                         </v-avatar>
                         <tuui-chat-card :messages="messages" :show-copy="false" :index="group.index"
                             :range="group.messages.length">
-                            <v-tabs v-model="dialogs[group.tab]" :items="group.messages" show-arrows
-                                @click="console.log(group.messages.length)">
+                            <v-tabs v-model="dialogs[group.tab]" :items="group.messages" show-arrows>
                                 <template v-slot:tab="{ item }">
-                                    <v-tab @click="console.log(group, dialogs)" :text="item.index" :key="item.index"
-                                        :value="item.index">
+                                    <v-tab :text="item.index" :key="item.index" :value="item.index">
                                         <v-icon v-if="item.role == 'tool'" icon="mdi-arrow-left-bold-circle"
                                             color="primary"></v-icon>
                                         <v-icon v-if="item.role == 'assistant'" icon="mdi-arrow-right-bold-circle"
@@ -796,21 +794,26 @@
                                 </template>
                                 <template v-slot:item="{ item }">
                                     <v-tabs-window-item :key="item.index" :value="item.index">
-                                        <v-card class="mt-1" v-if="item.role == 'tool'">
-                                            <v-card-text class="font-weight-bold">
-                                                < {{item.tool_call_id}} </v-card-text>
-                                                    <v-card-text v-for="content in item.content">
-                                                        {{content.text}}
-                                                    </v-card-text>
+                                        <v-card class="mt-1" variant="flat" v-if="item.role == 'tool'">
+                                            <v-card-item prepend-icon="mdi-chevron-left">
+                                                <v-card-subtitle>
+                                                    {{item.tool_call_id}}
+                                                </v-card-subtitle>
+                                            </v-card-item>
+                                            <v-card-text v-for="content in item.content">
+                                                {{content.text}}
+                                            </v-card-text>
                                         </v-card>
-                                        <v-card class="mt-1" v-if="item.role == 'assistant'">
+                                        <v-card class="mt-1" variant="flat" v-if="item.role == 'assistant'">
                                             <v-card-text v-if="item.content" class="font-weight-bold">
                                                 {{ item.content }}
                                             </v-card-text>
                                             <div v-for="content in item.tool_calls">
-                                                <v-card-text class="font-weight-bold">
-                                                    > {{content.id}}
-                                                </v-card-text>
+                                                <v-card-item prepend-icon="mdi-chevron-right">
+                                                    <v-card-subtitle>
+                                                        {{content.id}}
+                                                    </v-card-subtitle>
+                                                </v-card-item>
                                                 <v-card-text>
                                                     {{content.function.name}}({{content.function.arguments }})
                                                 </v-card-text>
@@ -1460,7 +1463,7 @@
                                 };
 
                                 await callNextTool(last.tool_calls, 0);
-                                
+
                                 if (tool_called) {
                                     this.startInference()
                                 }
