@@ -6,6 +6,9 @@ This example has been tested exclusively on Windows, but Electron itself is cros
 
 The goal is to provide the SIMPLEST possible code to help you understand the principles of MCP.
 
+## Demo
+![](./demo.gif)
+
 ## Architecture
 
 ```mermaid
