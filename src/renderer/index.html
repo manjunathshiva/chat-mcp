@@ -45,20 +45,6 @@
     <!-- https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/MaterialDesign-Webfont/7.4.47/css/materialdesignicons.min.css -->
     <link href="https://cdn.jsdelivr.org/npm/@mdi/font/css/materialdesignicons.min.css" rel="stylesheet" rel="preload">
 
-    <!-- <script src="
-https://gcore.jsdelivr.net/npm/node-process/index.min.js
-"></script>
-
-    <script type="module">
-        import { Client } from 'https://gcore.jsdelivr.net/npm/@modelcontextprotocol/sdk/dist/client/index.js';
-        import { StdioClientTransport } from 'https://gcore.jsdelivr.net/npm/@modelcontextprotocol/sdk/dist/client/stdio.js';
-    </script> -->
-
-    <!-- <script src="https://cdn.jsdelivr.org/npm/@modelcontextprotocol/sdk/dist/client/index.js"></script>
-    <script src="https://cdn.jsdelivr.org/npm/@modelcontextprotocol/sdk/dist/client/stdio.js"></script> -->
-
-    <script src="./renderer.js"></script>
-
     <!-- Keep the order, vue should be the first -->
     <script src="https://cdn.jsdelivr.org/npm/vue/dist/vue.global.prod.min.js"></script>
 
@@ -179,12 +165,7 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
             overflow: hidden;
         }
 
-        .user-message {
-            border-bottom: 1px solid #e5e7eb;
-        }
-
-        .assitant-message {
-
+        .chat-message {
             border-bottom: 1px solid #e5e7eb;
         }
 
@@ -539,6 +520,9 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
                                                 {{ chatbotStore.stream ? "Stream" : "Stream: off" }}
                                             </v-chip>
                                             <v-chip label color="primary" class="ma-1">
+                                                {{ chatbotStore.mcp ? "MCP" : "MCP: off" }}
+                                            </v-chip>
+                                            <v-chip label color="primary" class="ma-1">
                                                 {{chatbotStore.max_tokens_type}}
                                                 {{": "}}
                                                 {{ chatbotStore.max_tokens_value ? chatbotStore.max_tokens_value :
@@ -572,6 +556,9 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
                                         </v-col>
                                         <v-checkbox v-model="chatbotStore.stream"
                                             :label="$t('$vuetify.dataIterator.i.stream')" color="primary">
+                                        </v-checkbox>
+                                        <v-checkbox v-model="chatbotStore.mcp"
+                                            :label="$t('$vuetify.dataIterator.i.mcp')" color="primary">
                                         </v-checkbox>
                                     </v-row>
                                     <v-row class="px-3 mt-0 mb-0">
@@ -742,17 +729,17 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
     </div>
 
     <template id="tuui-chat-box-template">
-        <div v-for="(message, index) in messages">
-            <div v-if="message.role === 'user'">
-                <div class="px-2 py-5 user-message">
+        <div v-for="group in groupMessages">
+            <div v-if="group.group === 'user'">
+                <div class="px-2 py-5 chat-message">
                     <div class="message">
                         <v-avatar :size=size class="mt-3 mr-3 mr-lg-6" color="primary" icon="mdi-account-circle">
                         </v-avatar>
-                        <tuui-chat-card class="gradient text-pre-wrap" :index="index" :messages="messages"
+                        <tuui-chat-card class="gradient text-pre-wrap" :index="group.index" :messages="messages"
                             :show-modify="true">
                             <template v-slot:default="{ showmodify }">
-                                <v-card-text v-if="Array.isArray(message.content)" class="md-preview">
-                                    <div v-for="(item, index) in message.content" :key="index">
+                                <v-card-text v-if="Array.isArray(group.message.content)" class="md-preview">
+                                    <div v-for="(item, index) in group.message.content" :key="index">
                                         <tuui-img-dialog v-if="item.type=='image_url'"
                                             :src="item.image_url.url"></tuui-img-dialog>
                                         <v-textarea class="conversation-area" variant="plain" density='compact'
@@ -763,28 +750,73 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
                                 <v-card-text v-else class="md-preview pt-1">
                                     <v-textarea class="conversation-area" variant="plain" density='compact' auto-grow
                                         rows="1" :readonly="!showmodify" :counter="showmodify"
-                                        :hide-details="!showmodify" v-model="message.content"></v-textarea>
+                                        :hide-details="!showmodify" v-model="group.message.content"></v-textarea>
                                 </v-card-text>
                             </template>
                         </tuui-chat-card>
                     </div>
                 </div>
             </div>
-            <div v-else>
-                <div class="px-2 py-5 assitant-message">
+            <div v-if="group.group === 'assistant'">
+                <div class="px-2 py-5 chat-message">
                     <div class="message">
                         <v-avatar :size=size class="mt-3 mr-3 mr-lg-6" color="teal" icon="mdi-lightning-bolt-circle">
                         </v-avatar>
-                        <tuui-chat-card :index="index" :messages="messages" :show-content="true">
+                        <tuui-chat-card :index="group.index" :messages="messages" :show-content="true">
                             <template v-slot:default="{ showcontent }">
                                 <v-card-text v-if="showcontent" class="md-preview pt-1">
                                     <v-textarea class="conversation-area" variant="plain" density='compact' auto-grow
-                                        hide-details rows="1" readonly v-model="message.content"></v-textarea>
+                                        hide-details rows="1" readonly v-model="group.message.content"></v-textarea>
                                 </v-card-text>
-                                <md-preview v-else :model-value="message.content" class="md-preview"
+                                <md-preview v-else :model-value="group.message.content" class="md-preview"
                                     :language="language == 'zhHans' ? 'zh-CN' : 'en-US'" :code-foldable="true"
                                     auto-fold-threshold="Infinity"></md-preview>
                             </template>
+                        </tuui-chat-card>
+                    </div>
+                </div>
+            </div>
+            <div v-if="group.group === 'tool'">
+                <div class="px-2 py-5 chat-message">
+                    <div class="message">
+                        <v-avatar :size=size class="mt-3 mr-3 mr-lg-6" color="brown" icon="mdi-swap-vertical-circle">
+                        </v-avatar>
+                        <tuui-chat-card :messages="messages" :show-copy="false" :index="group.index" :range="group.messages.length">
+                            <v-tabs v-model="dialogs[group.tab]" :items="group.messages" show-arrows @click="console.log(group.messages.length)">
+                                <template v-slot:tab="{ item }">
+                                    <v-tab @click="console.log(group, dialogs)" :text="item.index" :key="item.index"
+                                        :value="item.index">
+                                        <v-icon v-if="item.role == 'tool'" icon="mdi-arrow-left-bold-circle"
+                                            color="primary"></v-icon>
+                                        <v-icon v-if="item.role == 'assistant'" icon="mdi-arrow-right-bold-circle"
+                                            color="teal"></v-icon>
+                                    </v-tab>
+                                </template>
+                                <template v-slot:item="{ item }">
+                                    <v-tabs-window-item :key="item.index" :value="item.index">
+                                        <v-card class="mt-1" v-if="item.role == 'tool'">
+                                            <v-card-text class="font-weight-bold">
+                                                < {{item.tool_call_id}} </v-card-text>
+                                                    <v-card-text v-for="content in item.content">
+                                                        {{content.text}}
+                                                    </v-card-text>
+                                        </v-card>
+                                        <v-card class="mt-1" v-if="item.role == 'assistant'">
+                                            <v-card-text v-if="item.content" class="font-weight-bold">
+                                                {{ item.content }}
+                                            </v-card-text>
+                                            <div v-for="content in item.tool_calls">
+                                                <v-card-text class="font-weight-bold">
+                                                    > {{content.id}}
+                                                </v-card-text>
+                                                <v-card-text>
+                                                    {{content.function.name}}({{content.function.arguments }})
+                                                </v-card-text>
+                                            </div>
+                                        </v-card>
+                                    </v-tabs-window-item>
+                                </template>
+                            </v-tabs>
                         </tuui-chat-card>
                     </div>
                 </div>
@@ -808,14 +840,14 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
     <template id="tuui-chat-card-template">
         <v-hover open-delay="100">
             <template v-slot:default="{ isHovering, props }">
-                <v-card v-bind="props" :elevation="isHovering ? 4 : 2">
+                <v-card v-bind="props" :elevation="isHovering ? 4 : 2" width="100vw" max-width="100%">
                     <slot :showcontent="showcontent" :showmodify="showmodify"></slot>
                     <v-expand-transition>
                         <div v-if="isHovering">
                             <v-divider></v-divider>
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn color="primary" icon="mdi-content-copy" size="x-small" variant="plain"
+                                <v-btn v-if="showCopy" color="primary" icon="mdi-content-copy" size="x-small" variant="plain"
                                     @click="copyToClipboard(messages[index])"></v-btn>
                                 <v-btn v-if="showModify" color="primary"
                                     :icon=" showmodify ? 'mdi-check-bold' : 'mdi-lead-pencil'" size="x-small"
@@ -824,7 +856,7 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
                                     :icon=" showcontent ? 'mdi-eye-remove' : 'mdi-eye'" size="x-small" variant="plain"
                                     @click="showcontent = !showcontent" v-bind="showcontent"></v-btn>
                                 <v-btn v-if="showDelete" color="error" icon="mdi-delete-off-outline" size="x-small"
-                                    variant="plain" @click="messages.splice(index, 1)"></v-btn>
+                                    variant="plain" @click="messages.splice(index, range)"></v-btn>
                             </v-card-actions>
                         </div>
                     </v-expand-transition>
@@ -834,7 +866,7 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
     </template>
 
     <script lang="ts" setup>
-        const { createApp, ref, computed, onMounted, watch, nextTick, axios, defineProps, defineComponent } = Vue
+        const { createApp, ref, reactive, computed, onMounted, watch, nextTick, axios, defineProps, defineComponent } = Vue
         const { createVuetify } = Vuetify
         const { createPinia, defineStore, storeToRefs } = Pinia
         const { createI18n, useI18n } = VueI18n
@@ -847,6 +879,9 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
 
             actions: {
                 listTools: async function (resourceName) {
+                    if (!window.mcp) {
+                        return null
+                    }
                     const mcpKeys = Object.keys(window.mcp)
                     const mcpTools = []
                     await Promise.all(mcpKeys.map(async (key) => {
@@ -881,12 +916,33 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
                 },
                 callTool: async function (tool_name, tool_args) {
                     const tool = await this.getTool(tool_name)
+                    if (!tool) {
+                        return this.packReturn(`Tool name '${tool_name}' not found`)
+                    }
+
+                    let tool_arguments
+
+                    try {
+                        tool_arguments = JSON.parse(tool_args)
+                    } catch (e) {
+                        return this.packReturn(`Arguments JSON parse error: '${e}'`)
+                    }
+
                     const params = {
                         name: tool_name,
-                        arguments: tool_args
+                        arguments: tool_arguments
                     }
+
                     const result = await window.mcp[tool.server].call(params)
                     return result
+                },
+                packReturn: (string) => {
+                    return {
+                        content: [{
+                            type: 'text',
+                            text: string
+                        }]
+                    }
                 }
             },
         });
@@ -942,10 +998,12 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
             template: '#tuui-chat-card-template',
             props: {
                 index: { type: Number, required: true },
+                range: { type: Number, required: false, default: 1 },
                 messages: { type: Object, required: true },
                 showContent: { type: Boolean, default: false },
                 showDelete: { type: Boolean, default: true },
                 showModify: { type: Boolean, default: false },
+                showCopy: { type: Boolean, default: true },
             },
             setup(props) {
                 const showcontent = ref(false);
@@ -985,9 +1043,53 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
                 TuuiChatCard,
             },
             props: {
-                messages: { type: Object, required: true },
+                messages: { type: Array, required: true },
                 size: { type: Number },
                 language: { type: String }
+            },
+            setup(props) {
+                const dialogs = reactive({});
+                const groupMessages = computed(() => {
+                    const groups = [];
+                    props.messages.forEach((message, index) => {
+                        if (message.role === 'user') {
+                            groups.push({
+                                index: index,
+                                group: 'user',
+                                message: message
+                            })
+                        } else if ((message.role === 'assistant') && (!message.tool_calls || message.tool_calls.length == 0)) {
+                            groups.push({
+                                index: index,
+                                group: 'assistant',
+                                message: message
+                            })
+                        } else {
+                            const lastGroup = groups.at(-1)
+                            if (lastGroup?.group == 'tool') {
+                                lastGroup.messages.push(message)
+                                dialogs[lastGroup.tab] = lastGroup.length
+                                lastGroup.length += 1
+                            } else {
+                                const id = message.tool_call_id || message.tool_calls[0]?.id
+                                groups.push({
+                                    index: index,
+                                    group: 'tool',
+                                    tab: id,
+                                    messages: [message],
+                                    length: 1
+                                })
+                                dialogs[id] = 0
+                            }
+                        }
+                    })
+                    return groups
+                });
+
+                return {
+                    dialogs,
+                    groupMessages
+                }
             }
         };
 
@@ -1235,24 +1337,6 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
                                 this.conversation = [];
                                 snackbarStore.showSuccessMessage('$vuetify.dataIterator.snackbar.addnew')
                             }
-
-                            console.log(await mcpStore.listTools())
-                            console.log(await window.mcp['filesystem'].call({
-                                name: 'list_allowed_directories',
-                                arguments: {}
-                            }))
-
-                            // mcpStore.getResourceFunction("listResources")
-
-                            const tool = mcpStore.getResourceFunction("listResources")
-
-                            const resources = await tool?.fn();
-                            console.log(tool)
-
-                            const tool2 = mcpStore.getResourceFunction("readResource")
-
-                            const content = await tool2?.fn({ uri: resources.resources[0].uri });
-                            console.log(content)
                         },
                         stop() {
                             this.generating = false;
@@ -1306,8 +1390,10 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
 
                                 this.conversation.push({
                                     content: imageBase64
-                                        ? [{ type: "image_url", image_url: { url: imageBase64 } }, { type: "text", text: this.userMessage }]
-                                        : this.userMessage,
+                                        ? [
+                                            { type: "image_url", image_url: { url: imageBase64 } },
+                                            { type: "text", text: this.userMessage }
+                                        ] : this.userMessage,
                                     role: "user",
                                 });
 
@@ -1325,19 +1411,36 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
                         },
                         postToolCall: async function () {
                             const last = this.conversation.at(-1)
-                            let result = ''
-                            if (last.tool_calls) {
-                                try {
-                                    const tool_call = last.tool_calls
-                                    console.log(tool_call)
-                                    const tool_result = await mcpStore.callTool(tool_call?.name, JSON.parse(tool_call?.arguments));
-                                    console.log(tool_result)
-                                    result = JSON.stringify(tool_result)
-                                } catch (e) {
-                                    result = e
-                                } finally {
-                                    delete last.tool_calls
-                                    last.content = result
+                            if (!last || !last.tool_calls) {
+                                return
+                            }
+                            if (last.tool_calls.length == 0) {
+                                delete last.tool_calls
+                                return
+                            } else {
+                                let tool_called = false
+                                console.log(last.tool_calls)
+                                const promises = last.tool_calls.map(tool_call => {
+                                    return mcpStore.callTool(
+                                        tool_call.function.name,
+                                        tool_call.function.arguments
+                                    ).then(result => {
+                                        console.log(result);
+                                        if (result.content) {
+                                            this.conversation.push({
+                                                role: "tool",
+                                                content: result.content,
+                                                tool_call_id: tool_call.id
+                                            })
+                                            tool_called = true
+                                        }
+                                        return result;
+                                    })
+                                });
+                                const results = await Promise.all(promises);
+                                console.log(results)
+                                if (tool_called) {
+                                    this.startInference()
                                 }
                             }
                         }
@@ -1473,7 +1576,8 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
                         temperature: "",
                         top_p: "",
                         method: "POST",
-                        stream: true
+                        stream: true,
+                        mcp: false
                     }),
 
                     persist: {
@@ -1510,8 +1614,6 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
                         if (item.role === "user" && item.content[0].type === "image_url") {
                             // Image is too large, only latest query could be kept
                             newConversation = [item];
-                        } else if (item.role === "assistant" && !item.content) {
-                            // Skip empty return and tool_calls
                         }
                         else {
                             newConversation.push(item);
@@ -1531,7 +1633,6 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
                             messages: agentStore.promptMessage(conversation),
                             model: chatbotStore.model,
                             stream: chatbotStore.stream,
-                            tools: await mcpStore.listTools()
                         }
 
                         if (chatbotStore.max_tokens_value) {
@@ -1544,6 +1645,10 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
 
                         if (chatbotStore.top_p) {
                             body["top_p"] = parseFloat(chatbotStore.top_p)
+                        }
+
+                        if (chatbotStore.mcp) {
+                            body["tools"] = await mcpStore.listTools()
                         }
 
                         const request = {
@@ -1581,7 +1686,7 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
                         // Add the bot message
                         messageStore.conversation.push({
                             content: "",
-                            tool_calls: {},
+                            tool_calls: [],
                             role: "assistant",
                         });
 
@@ -1663,17 +1768,21 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
                 const parseJson = (content, target) => {
                     try {
                         const parsed = JSON.parse(content)
-                        const choice = parseChoices(parsed)
-                        parseChoice(choice, target)
+                        // const choice = 
+                        parseChoices(parsed, target)
+                        // parseChoice(choice, target)
                     } catch (e) {
                         console.log(e, content)
                         parseChoice(content, target)
                     }
                 };
 
-                const parseChoices = (parsed) => {
+                const parseChoices = (parsed, target) => {
                     if ('choices' in parsed) {
-                        return parsed.choices.map((choice) => choice.delta || choice.message)
+                        return parsed.choices.map((choice) => {
+                            const content = choice.delta || choice.message
+                            return parseChoice(content, target)
+                        })
                     } else if ('response' in parsed) {
                         return parsed.response
                     } else {
@@ -1684,22 +1793,34 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
                 const parseChoice = (choice, target) => {
                     if (choice) {
                         if (target.role == 'assistant') {
-                            target.content += choice.content || '';
-                            parseTool(choice[0]?.tool_calls, target)
+                            if (typeof choice === 'string') {
+                                target.content += choice
+                            } else if (typeof choice.content === 'string') {
+                                target.content += choice.content
+                            }
+                            parseTool(choice.tool_calls, target)
                         }
                     }
                 };
 
                 const parseTool = (tools, target) => {
                     if (tools) {
-                        const source = tools[0]?.function
-                        for (const key in source) {
-                            if (target.tool_calls[key]) {
-                                target.tool_calls[key] += source[key];
+                        tools.map((tool) => {
+                            const lastTool = target.tool_calls.at(-1)
+                            if (lastTool && (!tool.id || lastTool.id == tool.id)) {
+                                const source = tool.function
+                                for (const key in source) {
+                                    if (lastTool.function[key]) {
+                                        lastTool.function[key] += source[key];
+                                    } else {
+                                        lastTool.function[key] = source[key];
+                                    }
+                                }
+
                             } else {
-                                target.tool_calls[key] = source[key];
+                                target.tool_calls.push(tool)
                             }
-                        }
+                        })
                     }
                 };
 
@@ -1914,6 +2035,7 @@ https://gcore.jsdelivr.net/npm/node-process/index.min.js
                             advanced: 'Advanced',
                             method: 'HTTP Method',
                             stream: 'Stream',
+                            mcp: 'MCP',
                             maxTokensPrefix: 'Max Tokens Prefix',
                             temperature: 'Temperature',
                             topP: 'Top P',
