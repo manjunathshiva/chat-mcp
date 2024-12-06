@@ -6,7 +6,7 @@
     "type": "module",
     "scripts": {
         "start": "npm run build && electron ./dist/main/main.js",
-        "build": "tsc && copyfiles -u 1 src/renderer/index.html dist",
+        "build": "tsc && copyfiles -u 1 src/**/* -e src/**/*.ts dist",
         "build-app": "npm run build && electron-builder"
     },
     "build": {

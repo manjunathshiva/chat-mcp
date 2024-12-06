@@ -20,8 +20,6 @@ erDiagram
 
 Only 3 key files: `main.ts`, `client.ts`, `preload.ts`
 
-The files in src/mcp-file-test are not utilized; they are solely for reference purposes.
-
 ## Configuration
 
 Create a `.json` file and paste the following content into it. This file can then be provided as the interface configuration for the Chat UI.
