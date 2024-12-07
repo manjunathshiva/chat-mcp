@@ -30,7 +30,8 @@ Only 3 key files: `main.ts`, `client.ts`, `preload.ts`
 
 Create a `.json` file and paste the following content into it. This file can then be provided as the interface configuration for the Chat UI.
 
-- `api.json`
+- `gtp-api.json`
+
     ```json
     {
         "chatbotStore": {
@@ -54,7 +55,30 @@ Create a `.json` file and paste the following content into it. This file can the
 
 You can replace the 'url' if you have direct access to the OpenAI API.
 
-Alternatively, you can also use another API endpoint that supports function calls.
+Alternatively, you can also use another API endpoint that supports function calls: 
+
+- `qwen-api.json`
+
+    ```json
+    {
+        "chatbotStore": {
+            "apiKey": "",
+            "url": "https://dashscope.aliyuncs.com/compatible-mode",
+            "path": "/v1/chat/completions",
+            "model": "qwen-turbo",
+            "max_tokens_value": "",
+            "mcp": true
+        },
+        "defaultChoiceStore": {
+            "model": [
+                "qwen-turbo",
+                "qwen-plus",
+                "qwen-max"
+            ]
+        }
+    }
+    ```
+
 
 ## Troubleshooting
 
@@ -69,14 +93,14 @@ On windows, npx should be replaced as npx.cmd such as `"command": "npx.cmd"`
 - Or you can use `node` in config.json: 
     ```json
     {
-    "mcpServers": {
-        "filesystem": {
-        "command": "node",
-        "args": [
-            "node_modules/@modelcontextprotocol/server-filesystem/dist/index.js",
-            "D:/Github/mcp-test"
-        ]
+        "mcpServers": {
+            "filesystem": {
+            "command": "node",
+            "args": [
+                "node_modules/@modelcontextprotocol/server-filesystem/dist/index.js",
+                "D:/Github/mcp-test"
+            ]
+            }
         }
-    }
     }
     ```
