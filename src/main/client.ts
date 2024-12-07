@@ -12,7 +12,7 @@ export async function initializeClient(name: String, config: ServerConfig) {
     const client_name = `${name}-client`;
     const client = new Client({
         name: client_name,
-        version: "1.0.0",
+        version: "0.6.2",
     }, {
         capabilities: {}
     });

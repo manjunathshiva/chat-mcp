@@ -26,7 +26,7 @@ async function exposeAPIs() {
     };
   });
 
-  contextBridge.exposeInMainWorld('mcp', api);
+  contextBridge.exposeInMainWorld('mcpServers', api);
 }
 
 exposeAPIs();

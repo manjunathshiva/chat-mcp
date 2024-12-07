@@ -44,12 +44,14 @@ async function initClient(): Promise<ClientObj[]> {
       Object.entries(config.mcpServers).map(async ([name, serverConfig]) => {
         console.log(`Initializing client for ${name} with config:`, serverConfig);
         const client = await initializeClient(name, serverConfig);
+        console.log(`${name} initialized.`);
         return { name, client };
       })
     );
-    console.log('All clients initialized:', clients);
+    console.log('All clients initialized.');
     return clients
   }
+  console.log('NO clients initialized.');
   return []
 }
 
