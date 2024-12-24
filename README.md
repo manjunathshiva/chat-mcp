@@ -86,9 +86,7 @@ Alternatively, you can also use another API endpoint that supports function call
 
 Modify the `config.json` in src/
 
-On windows, npx should be replaced as npx.cmd such as `"command": "npx.cmd"`
-
-- Or you can provide the original path: `C:\\Program\\ Files\\nodejs\\node_modules\\npm\\bin\\npx.cmd`
+On windows, npx may not work, please refer my workaround: [ISSUE 101](https://github.com/modelcontextprotocol/typescript-sdk/issues/101)
 
 - Or you can use `node` in config.json: 
     ```json
@@ -104,3 +102,8 @@ On windows, npx should be replaced as npx.cmd such as `"command": "npx.cmd"`
         }
     }
     ```
+
+Please ensure that the provided path is valid, especially if you are using a relative path. It is highly recommended to provide an absolute path for better clarity and accuracy.
+
+By default, I will install `server-everything`, `server-filesystem`, and `server-puppeteer` for test purposes. However, you can install additional server libraries or use `npx` to utilize other server libraries as needed.
+

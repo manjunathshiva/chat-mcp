@@ -17,6 +17,12 @@
         "files": [
             "**/*"
         ],
+        "extraFiles": [
+            {
+                "from": "./src/main/config.json",
+                "to": "."
+            }
+        ],
         "win": {
             "target": "nsis",
             "icon": "favicon.ico"
@@ -27,14 +33,17 @@
         }
     },
     "devDependencies": {
+        "@types/node-notifier": "^8.0.5",
         "copyfiles": "^2.4.1",
         "electron": "^33.2.1",
         "electron-builder": "^24.9.1",
         "electron-debug": "^4.1.0",
+        "node-notifier": "^10.0.1",
         "typescript": "^5.7.2"
     },
     "dependencies": {
         "@modelcontextprotocol/sdk": "^1.0.4",
+        "@modelcontextprotocol/server-everything": "^0.6.2",
         "@modelcontextprotocol/server-filesystem": "^0.6.2",
         "@modelcontextprotocol/server-puppeteer": "^0.6.2"
     }

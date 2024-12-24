@@ -12,6 +12,8 @@
       "esModuleInterop": true,
       "moduleResolution": "node",
       "resolveJsonModule": true,
+      "allowSyntheticDefaultImports": true,
+      "useUnknownInCatchVariables": false,
       "strict": true,
       "outDir": "./dist",
       "rootDir": "./src"

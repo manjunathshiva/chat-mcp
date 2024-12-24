@@ -1,8 +1,5 @@
 // client.ts
-import { Client } from "@modelcontextprotocol/sdk/client/index.js";
-import { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js";
-import { ListToolsResultSchema, CallToolResultSchema } from "@modelcontextprotocol/sdk/types.js";
-import { ServerConfig } from './types.js';
+import { Client, StdioClientTransport, CreateMessageRequestSchema, ServerConfig } from './types.js';
 
 export async function initializeClient(name: String, config: ServerConfig) {
     const transport = new StdioClientTransport({
@@ -14,31 +11,42 @@ export async function initializeClient(name: String, config: ServerConfig) {
         name: client_name,
         version: "1.0.0",
     }, {
-        capabilities: {}
+        capabilities: {
+            "sampling": {}
+        }
     });
     await client.connect(transport);
     console.log(`${client_name} connected.`);
+
+    client.setRequestHandler(CreateMessageRequestSchema, async (request) => {
+        console.log(request)
+        return {
+            model: "test-sampling-model",
+            stopReason: "endTurn",
+            role: "assistant",
+            content: {
+                type: "text",
+                text: "This is a test message from the client used for sampling the LLM. If you receive this message, please stop further attempts, as the sampling test has been successful.",
+            }
+        };
+    });
+
     return client;
 }
 
-export async function listTools(client: Client) {
-    const tools = await client.request(
-        { method: "tools/list" },
-        ListToolsResultSchema
-    );
-    console.log('List Tools:', tools);
-    return tools;
-}
+export async function manageRequests(
+    client: Client,
+    method: string,
+    schema: any,
+    params?: any
+) {
+    const requestObject = {
+        method: method,
+        ...(params && { params: params })
+    };
 
-export async function callTools(client: Client, params: any) {
-    const call_tools = await client.request(
-        {
-            method: "tools/call",
-            params: params
-        },
-        CallToolResultSchema
-    );
-    console.log('Call Tools:', call_tools);
-    return call_tools;
+    const result = await client.request(requestObject, schema);
+    console.log(result);
+    return result;
 }
 
