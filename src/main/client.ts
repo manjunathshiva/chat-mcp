@@ -19,7 +19,7 @@ export async function initializeClient(name: String, config: ServerConfig) {
     console.log(`${client_name} connected.`);
 
     client.setRequestHandler(CreateMessageRequestSchema, async (request) => {
-        console.log(request)
+        console.log('Sampling request received:\n', request)
         return {
             model: "test-sampling-model",
             stopReason: "endTurn",

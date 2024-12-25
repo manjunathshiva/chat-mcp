@@ -602,7 +602,7 @@
                         <template v-slot:header>
                             <v-toolbar class="px-2">
                                 <v-text-field v-model="promptStore.search" density="comfortable" placeholder="Search"
-                                    prepend-inner-icon="mdi-magnify" style="max-width: 300px;" variant="solo" clearable
+                                    prepend-inner-icon="mdi-magnify" width="100vw" max-width="400px" variant="solo" clearable
                                     hide-details></v-text-field>
                             </v-toolbar>
                         </template>
@@ -914,10 +914,10 @@
                                     :icon=" showcontent ? 'mdi-eye-remove' : 'mdi-eye'" size="x-small" variant="plain"
                                     @click="showcontent = !showcontent" v-bind="showcontent"></v-btn>
                                 <v-spacer></v-spacer>
+                                <v-btn v-if="showReduce && index > 0" color="error" icon="mdi-format-align-top" size="x-small"
+                                    variant="plain" @click="messages.splice(0, index)"></v-btn>
                                 <v-btn v-if="showDelete" color="error" icon="mdi-delete-off-outline" size="x-small"
                                     variant="plain" @click="messages.splice(index, range)"></v-btn>
-                                <v-btn v-if="showReduce" color="error" icon="mdi-format-align-top" size="x-small"
-                                    variant="plain" @click="messages.splice(0, index)"></v-btn>
                             </v-card-actions>
                         </div>
                     </v-expand-transition>
@@ -1243,6 +1243,7 @@
                 promptSheet: false,
                 promptList: [],
                 promptSelect: {},
+                search: '',
                 loading: false,
             }),
             actions: {
@@ -1290,14 +1291,17 @@
                         return []
                     }
                     const params = { name: this.promptSelect.name }
-                    for (const argument of this.promptSelect.arguments) {
-                        if (argument.name) {
-                            if (!params['arguments']) {
-                                params['arguments'] = {};
+                    if (this.promptSelect.arguments) {
+                        for (const argument of this.promptSelect.arguments) {
+                            if (argument.name) {
+                                if (!params['arguments']) {
+                                    params['arguments'] = {};
+                                }
+                                params['arguments'][argument.name] = argument.content
                             }
-                            params['arguments'][argument.name] = argument.content
                         }
                     }
+
                     console.log(params)
                     const prompts = await getFun(params)
 
