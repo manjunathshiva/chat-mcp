@@ -289,15 +289,15 @@
             </v-container>
             <div class="input-area">
                 <v-sheet elevation="0" class="input-panel d-flex align-end px-1">
-                    <v-speed-dial location="top right" transition="fade-transition" offset="50">
+                    <v-speed-dial location="bottom right" transition="expand-transition" offset="50">
                         <template v-slot:activator="{ props: activatorProps }">
                             <v-fab v-bind="activatorProps" size="small" icon="mdi-cog" absolute
                                 class="input-icon"></v-fab>
                         </template>
-                        <v-btn variant="elevated" icon @click="settingStore.initDialog">
+                        <v-btn key="4" variant="elevated" icon @click="settingStore.initDialog">
                             <v-icon>mdi-api</v-icon>
                         </v-btn>
-                        <v-badge color="transparent" location='top left'>
+                        <v-badge key="3" color="transparent" location='top left'>
                             <template v-slot:badge>
                                 <iconify-icon :icon="languageStore.getIcon2()"></iconify-icon>
                             </template>
@@ -319,12 +319,12 @@
                                 </v-list>
                             </v-menu>
                         </v-badge>
-                        <v-badge :content="historyStore.conversation.length" color="info" max="99" location='top left'>
+                        <v-badge key="2" :content="historyStore.conversation.length" color="info" max="99" location='top left'>
                             <v-btn variant="elevated" icon @click="settingStore.configHistory = true">
                                 <v-icon>mdi-list-box</v-icon>
                             </v-btn>
                         </v-badge>
-                        <v-btn :color="messageStore.conversation.length > 0 ? 'primary': 'grey'" variant="elevated" icon
+                        <v-btn key="1" :color="messageStore.conversation.length > 0 ? 'primary': 'grey'" variant="elevated" icon
                             @click="messageStore.init()">
                             <v-icon>mdi-pencil-plus</v-icon>
                         </v-btn>

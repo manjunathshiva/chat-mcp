@@ -1,6 +1,6 @@
 {
     "mcpServers": {
-        "filesystem": {
+        "everything": {
             "command": "node",
             "args": [
                 "D:/Github/chat-mcp/node_modules/@modelcontextprotocol/server-everything/dist/index.js"
