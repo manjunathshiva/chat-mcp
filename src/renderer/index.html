@@ -319,15 +319,12 @@
                                 </v-list>
                             </v-menu>
                         </v-badge>
-                        <v-badge key="2" :content="historyStore.conversation.length" color="info" max="99" location='top left'>
+                        <v-badge key="2" :content="historyStore.conversation.length" color="info" max="99"
+                            location='top left'>
                             <v-btn variant="elevated" icon @click="settingStore.configHistory = true">
                                 <v-icon>mdi-list-box</v-icon>
                             </v-btn>
                         </v-badge>
-                        <v-btn key="1" :color="messageStore.conversation.length > 0 ? 'primary': 'grey'" variant="elevated" icon
-                            @click="messageStore.init()">
-                            <v-icon>mdi-pencil-plus</v-icon>
-                        </v-btn>
                     </v-speed-dial>
                     <v-container>
                         <v-row>
@@ -357,8 +354,19 @@
                         </v-btn>
                         <v-btn v-else-if="messageStore.generating" size="small" color="primary" variant="elevated"
                             @click="messageStore.stop" icon="mdi-stop"></v-btn>
-                        <v-btn v-else-if="messageStore.conversation.length > 0" size="small" color="primary"
-                            variant="elevated" @click="messageStore.resendMessage" icon="mdi-autorenew"></v-btn>
+                        <v-speed-dial v-else-if="messageStore.conversation.length > 0" location="bottom center"
+                            transition="expand-transition">
+                            <template v-slot:activator="{ props: activatorProps }">
+                                <v-btn v-bind="activatorProps" size="small" icon="mdi-dots-horizontal"
+                                    color="primary"></v-btn>
+                            </template>
+                            <v-btn key="2" size="small" color="primary" variant="elevated"
+                                @click="messageStore.resendMessage" icon="mdi-autorenew"></v-btn>
+                            </v-btn>
+                            <v-btn key="1" color="primary" variant="elevated" icon @click="messageStore.init()">
+                                <v-icon>mdi-pencil-plus</v-icon>
+                            </v-btn>
+                        </v-speed-dial>
                         <v-btn v-else size="small" :color="mcpStore.getServers ? 'primary': 'grey'" variant="elevated"
                             @click="mcpStore.getServers ? promptStore.promptDialog = true : false"
                             icon="mdi-account-edit">
@@ -602,8 +610,8 @@
                         <template v-slot:header>
                             <v-toolbar class="px-2">
                                 <v-text-field v-model="promptStore.search" density="comfortable" placeholder="Search"
-                                    prepend-inner-icon="mdi-magnify" width="100vw" max-width="400px" variant="solo" clearable
-                                    hide-details></v-text-field>
+                                    prepend-inner-icon="mdi-magnify" width="100vw" max-width="400px" variant="solo"
+                                    clearable hide-details></v-text-field>
                             </v-toolbar>
                         </template>
                         <template v-slot:default="{ items }">
@@ -914,8 +922,8 @@
                                     :icon=" showcontent ? 'mdi-eye-remove' : 'mdi-eye'" size="x-small" variant="plain"
                                     @click="showcontent = !showcontent" v-bind="showcontent"></v-btn>
                                 <v-spacer></v-spacer>
-                                <v-btn v-if="showReduce && index > 0" color="error" icon="mdi-format-align-top" size="x-small"
-                                    variant="plain" @click="messages.splice(0, index)"></v-btn>
+                                <v-btn v-if="showReduce && index > 0" color="error" icon="mdi-format-align-top"
+                                    size="x-small" variant="plain" @click="messages.splice(0, index)"></v-btn>
                                 <v-btn v-if="showDelete" color="error" icon="mdi-delete-off-outline" size="x-small"
                                     variant="plain" @click="messages.splice(index, range)"></v-btn>
                             </v-card-actions>
