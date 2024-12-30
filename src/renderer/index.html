@@ -124,8 +124,9 @@
                 margin: 0 auto;
             }
 
-            .input-box {
+            .input-box textarea {
                 margin-bottom: 1px;
+                overflow-y: hidden
             }
 
             .input-icon {
@@ -328,22 +329,20 @@
                     </v-speed-dial>
                     <v-container>
                         <v-row>
-                            <v-spacer></v-spacer>
-                            <v-div class='ma-2'>
-                                <v-file-input accept="image/*" hide-input v-model="messageStore.images"
-                                    prepend-icon="mdi-plus-circle-outline"></v-file-input>
-                            </v-div>
-                            <v-btn class='ma-2' size="22" icon="$error" @click="messageStore.clear()">
-                            </v-btn>
-                        </v-row>
-                        <v-row>
                             <v-textarea class="input-box" dirty color="primary" type="text" variant="solo" counter
-                                @keydown="messageStore.handleKeydown" v-model="messageStore.userMessage" :label=""
-                                @focus="settingStore.setInputRow(2,0)" @blur="settingStore.setInputRow(1,150)"
+                                clearable @keydown="messageStore.handleKeydown" v-model="messageStore.userMessage"
+                                :label="" @focus="settingStore.setInputRow(2,0)" @blur="settingStore.setInputRow(1,150)"
                                 :rows="settingStore.inputRow" auto-grow max-rows="15">
                                 <template v-slot:prepend-inner>
-                                    <v-img v-show=messageStore.base64 class="chat-images" :src="messageStore.base64"
-                                        @click="messageStore.images=[]"></v-img>
+                                    <v-container>
+                                        <v-row>
+                                            <v-img v-if="messageStore.base64" class="chat-images mt-1"
+                                                :src="messageStore.base64" @click="messageStore.images=[]"></v-img>
+                                            <v-file-input v-else @click.stop accept="image/*" hide-input
+                                                v-model="messageStore.images"
+                                                prepend-icon="mdi-plus-circle-outline"></v-file-input>
+                                        </v-row>
+                                    </v-container>
                                 </template>
                             </v-textarea>
                         </v-row>
