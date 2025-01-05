@@ -20,6 +20,8 @@ The primary objective of this project is to deliver a clean, minimalistic codeba
 
 ## Architecture
 
+Adopted a straightforward architecture consistent with the MCP documentation to facilitate a clear understanding of MCP principles.
+
 ```mermaid
 erDiagram
     Renderer ||--o{ APP : IPC
@@ -27,7 +29,7 @@ erDiagram
     Client }|..|{ Server : Stdio
 ```
 
-Only 3 key files: `main.ts`, `client.ts`, `preload.ts`
+Only three key files need to be understood: `main.ts`, `client.ts`, and `preload.ts`, to grasp the essence of the project.
 
 ## How to use
 
