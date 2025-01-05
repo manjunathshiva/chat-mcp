@@ -120,7 +120,8 @@ async function createWindow() {
 
   mainWindow.loadFile(indexPath);
 
-  mainWindow.webContents.openDevTools();
+  // You can uncomment the following line to enable DevTools permanently.
+  // mainWindow.webContents.openDevTools();
 }
 
 app.whenReady().then(async () => {
