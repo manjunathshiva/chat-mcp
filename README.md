@@ -1,13 +1,22 @@
-# Chat MCP
+# MCP Chat Desktop App
+## A Cross-Platform Interface for LLMs
 
-An example of a framework that leverages MCP(Model Context Protocol) to interface with other LLMs.
+This desktop application utilizes the MCP (Model Context Protocol) to seamlessly connect and interact with various Large Language Models (LLMs). Built on Electron, the app ensures full cross-platform compatibility, enabling smooth operation across different operating systems.
 
-This example has been tested exclusively on Windows, but Electron itself is cross-platform.
+The primary objective of this project is to deliver a clean, minimalistic codebase that simplifies understanding the core principles of MCP. Additionally, it provides a quick and efficient way to test multiple servers and LLMs, making it an ideal tool for developers and researchers alike.
 
-The goal is to provide the SIMPLEST possible code to help you understand the principles of MCP.
+## Features
 
-## Demo
-![](./demo.gif)
+- Cross-Platform Compatibility: Supports Linux, macOS, and Windows.
+
+- Flexible Apache-2.0 License: Allows easy modification and building of your own desktop applications.
+
+- Dynamic LLM Configuration: Compatible with all OpenAI SDK-supported LLMs, enabling quick testing of multiple backends through manual or preset configurations.
+
+- Multi-Client Management: Configure and manage multiple clients to connect to multiple servers using MCP config.
+
+- UI Adaptability: The UI can be directly extracted for web use, ensuring consistent ecosystem and interaction logic across web and desktop versions.
+
 
 ## Architecture
 
@@ -107,3 +116,23 @@ Please ensure that the provided path is valid, especially if you are using a rel
 
 By default, I will install `server-everything`, `server-filesystem`, and `server-puppeteer` for test purposes. However, you can install additional server libraries or use `npx` to utilize other server libraries as needed.
 
+
+## Demo
+
+### Multimodal Support
+![](./demo-multimodal.png)
+
+### MCP Tools Visualization
+![](./demo-tools.png)
+
+### MCP Toolcall Process Overview
+![](./demo-toolcall.png)
+
+### MCP Prompts Template
+![](./demo-prompts.png)
+
+### Dynamic LLM Config
+![](./demo-llms.png)
+
+### DevTool Troubleshooting
+![](./demo-devtool.png)
