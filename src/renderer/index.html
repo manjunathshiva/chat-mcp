@@ -859,8 +859,11 @@
                                                     {{item.tool_call_id}}
                                                 </v-card-subtitle>
                                             </v-card-item>
-                                            <v-card-text v-for="content in item.content">
+                                            <v-card-text v-if="Array.isArray(item.content)" v-for="content in item.content">
                                                 {{content.text}}
+                                            </v-card-text>
+                                            <v-card-text v-else>
+                                                {{item.content}}
                                             </v-card-text>
                                         </v-card>
                                         <v-card class="mt-1" variant="flat" v-if="item.role == 'assistant'">
@@ -1673,6 +1676,7 @@
                         },
                         contentConvert: function (content, toolCallId) {
                             const msg = content.map(item => mcpStore.convertItem(item));
+                            console.log(msg)
                             if (msg.find(item => item.type === 'image_url')) {
                                 return [{
                                     role: "tool",
@@ -1686,7 +1690,7 @@
                             } else {
                                 return [{
                                     role: "tool",
-                                    content: msg,
+                                    content: msg.map(item => item.text).join('\n'), // If the LLM can support array in tool, use msg directly
                                     tool_call_id: toolCallId
                                 }]
                             }

@@ -90,6 +90,28 @@ Alternatively, you can also use another API endpoint that supports function call
     }
     ```
 
+- `deepinfra.json`
+
+    ```json
+    {
+        "chatbotStore": {
+            "apiKey": "",
+            "url": "https://api.deepinfra.com",
+            "path": "/v1/openai/chat/completions",
+            "model": "meta-llama/Meta-Llama-3.1-70B-Instruct",
+            "max_tokens_value": "32000",
+            "mcp": true
+        },
+        "defaultChoiceStore": {
+            "model": [
+                "meta-llama/Meta-Llama-3.1-70B-Instruct",
+                "meta-llama/Meta-Llama-3.1-405B-Instruct",
+                "meta-llama/Meta-Llama-3.1-8B-Instruct"
+            ]
+        }
+    }
+    ```
+
 
 ## Troubleshooting
 
