@@ -1773,7 +1773,6 @@
                             "http://127.0.0.1",
                             "https://api.deepinfra.com",
                             "https://api.deepseek.com",
-                            "https://api2.aiql.com",
                             "https://api.aiql.com"],
                         path: [
                             "/chat/completions",
@@ -1814,13 +1813,13 @@
                     id: "chatbotStore",
                     state: () => ({
                         apiKey: "",
-                        url: "https://api2.aiql.com",
-                        path: "/chat/completions",
-                        model: "meta-llama/Llama-3.3-70B-Instruct",
+                        url: "https://ai.aiql.com",
+                        path: "",
+                        model: "",
                         authPrefix: "Bearer",
                         contentType: "application/json",
                         max_tokens_type: "max_tokens",
-                        max_tokens_value: "32000",
+                        max_tokens_value: "",
                         temperature: "",
                         top_p: "",
                         method: "POST",
@@ -1904,7 +1903,7 @@
                         };
 
                         const completion = await fetch(
-                            chatbotStore.url + chatbotStore.path,
+                            chatbotStore.url + (chatbotStore.path ? chatbotStore.path : ''),
                             request
                         );
 
@@ -2030,9 +2029,9 @@
                             return parseChoice(content, target)
                         })
                     } else if ('response' in parsed) {
-                        return parsed.response
+                        return parseChoice(parsed.response, target)
                     } else {
-                        return parsed
+                        return parseChoice(parsed, target)
                     }
                 };
 
