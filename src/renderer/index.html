@@ -40,6 +40,30 @@
     <meta name="description"
         content="AIQL provides a suite of tools designed to streamline the development and deployment of AI applications in a cloud-native environment.">
     <title>Chatbot</title>
+    <style>
+        #loading {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 40px;
+            color: #1867C0;
+            z-index: 999;
+            opacity: 1;
+        }
+
+        ::-webkit-scrollbar {
+            block-size: 5px;
+            inline-size: 5px;
+        }
+    </style>
+    <div id="loading">
+        loading...
+    </div>
 
     <!-- MDI -->
     <!-- https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/MaterialDesign-Webfont/7.4.47/css/materialdesignicons.min.css -->
@@ -74,6 +98,13 @@
     <script src="https://cdn.jsdelivr.org/npm/sortablejs/Sortable.min.js"></script>
     <script src="https://cdn.jsdelivr.org/npm/vue3-draggable-next/dist/vuedraggable.umd.min.js"></script>
 
+    <script>
+        window.onload = function () {
+            document.getElementById('lottie').style.display = 'block';
+            document.getElementById('loading').style.display = 'none';
+        };
+    </script>
+
     <style scoped lang="scss">
         [v-cloak] {
             display: none;
@@ -97,6 +128,7 @@
         }
 
         #lottie {
+            display: none;
             height: calc(99vh - 50px);
             max-height: calc(100% - 100px);
         }
@@ -859,7 +891,8 @@
                                                     {{item.tool_call_id}}
                                                 </v-card-subtitle>
                                             </v-card-item>
-                                            <v-card-text v-if="Array.isArray(item.content)" v-for="content in item.content">
+                                            <v-card-text v-if="Array.isArray(item.content)"
+                                                v-for="content in item.content">
                                                 {{content.text}}
                                             </v-card-text>
                                             <v-card-text v-else>
