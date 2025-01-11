@@ -41,29 +41,39 @@
         content="AIQL provides a suite of tools designed to streamline the development and deployment of AI applications in a cloud-native environment.">
     <title>Chatbot</title>
     <style>
-        #loading {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 40px;
-            color: #1867C0;
-            z-index: 999;
-            opacity: 1;
+        ::-webkit-scrollbar {
+            display: none;
         }
 
-        ::-webkit-scrollbar {
-            block-size: 5px;
-            inline-size: 5px;
+        .loading {
+            all: initial;
+            position: fixed;
+            top: calc(50% - 35px);
+            left: calc(50% - 35px);
+            display: flex;
+            width: 70px;
+            height: 70px;
+            border: 4px solid #1867C0;
+            border-top-color: rgba(0, 0, 0, 0.2);
+            border-right-color: rgba(0, 0, 0, 0.2);
+            border-bottom-color: rgba(0, 0, 0, 0.2);
+            border-radius: 100%;
+            overflow: hidden;
+
+            animation: circle infinite 1s linear;
+        }
+
+        @keyframes circle {
+            0% {
+                transform: rotate(0);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
     </style>
-    <div id="loading">
-        loading...
-    </div>
+    <div id="loading" class="loading"></div>
 
     <!-- MDI -->
     <!-- https://mirrors.sustech.edu.cn/cdnjs/ajax/libs/MaterialDesign-Webfont/7.4.47/css/materialdesignicons.min.css -->
@@ -287,6 +297,7 @@
         }
 
         ::-webkit-scrollbar {
+            display: block;
             block-size: 5px;
             inline-size: 5px;
         }
