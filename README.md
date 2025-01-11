@@ -33,9 +33,17 @@ Only three key files need to be understood: `main.ts`, `client.ts`, and `preload
 
 ## How to use
 
-1. `npm install`
+After cloning or downloading this repository:
 
-2. `npm start`
+1. Please modify the `config.json` file located in [src/main](src/main).  
+   Ensure that the `command` and `path` specified in the `args` are valid.
+
+2. Please ensure that [Node.js](https://nodejs.org/) is installed on your system.  
+   You can verify this by running `node -v` and `npm -v` in your terminal to check their respective versions.
+
+3. `npm install`
+
+4. `npm start`
 
 ## Configuration
 
@@ -117,7 +125,7 @@ Alternatively, you can also use another API endpoint that supports function call
 
 #### Error: spawn npx ENOENT - [ISSUE 40](https://github.com/modelcontextprotocol/servers/issues/40)
 
-Modify the `config.json` in src/
+Modify the `config.json` in [src/main](src/main)
 
 On windows, npx may not work, please refer my workaround: [ISSUE 101](https://github.com/modelcontextprotocol/typescript-sdk/issues/101)
 
