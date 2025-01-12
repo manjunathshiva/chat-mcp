@@ -4,7 +4,7 @@ import {
   Client, McpServersConfig,
   ListToolsResultSchema, CallToolResultSchema,
   ListPromptsResultSchema, GetPromptResultSchema,
-  ListResourcesResultSchema, ReadResourceResultSchema
+  ListResourcesResultSchema, ReadResourceResultSchema, ListResourceTemplatesResultSchema
 } from './types.js';
 import { initializeClient, manageRequests } from './client.js';
 
@@ -166,6 +166,7 @@ app.whenReady().then(async () => {
       resources: {
         list: ListResourcesResultSchema,
         read: ReadResourceResultSchema,
+        'templates/list': ListResourceTemplatesResultSchema,
       },
     };
 

@@ -5,6 +5,8 @@ export { StdioClientTransport } from "@modelcontextprotocol/sdk/client/stdio.js"
 export {
   CreateMessageRequestSchema,
 
+  CompleteResultSchema,
+
   ListToolsResultSchema,
   CallToolResultSchema,
 
@@ -12,7 +14,8 @@ export {
   GetPromptResultSchema,
 
   ListResourcesResultSchema,
-  ReadResourceResultSchema
+  ReadResourceResultSchema,
+  ListResourceTemplatesResultSchema
 
 } from "@modelcontextprotocol/sdk/types.js";
 

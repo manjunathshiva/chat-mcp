@@ -367,6 +367,9 @@
                         <v-btn @click="settingStore.agentDialog = true" variant="elevated" icon="mdi-account-supervisor"
                             v-tooltip:end="$t('$vuetify.dataIterator.a.title')">
                         </v-btn>
+                        <v-btn v-if="mcpStore.getServers" @click="resourceStore.resourceDialog = true"
+                            variant="elevated" icon="mdi-database" v-tooltip:end="$t('$vuetify.dataIterator.r.title')">
+                        </v-btn>
                         <v-badge key="1" :content="historyStore.conversation.length" color="info" max="99"
                             location='top left'>
                             <v-btn variant="elevated" icon="mdi-list-box" @click="settingStore.configHistory = true"
@@ -651,7 +654,7 @@
             </v-dialog>
             <v-dialog v-model="promptStore.promptDialog" class="dialog-card">
                 <v-card prepend-icon="mdi-account-cog" :title="$t('$vuetify.dataIterator.p.title')">
-                    <v-data-iterator :items="promptStore.promptList" :search="promptStore.search"
+                    <v-data-iterator :items="promptStore.promptList" :search="promptStore.search" items-per-page="-1"
                         @update:options="promptStore.loadPrompts" :loading="promptStore.loading">
                         <template v-slot:header>
                             <v-toolbar class="px-2">
@@ -701,6 +704,57 @@
                             <v-btn class="pt-0" variant="flat" color="primary"
                                 @click="messageStore.applyPrompt(promptStore.fetchSelect())">Get</v-btn>
                         </v-card-actions>
+                    </v-card-text>
+                </v-card>
+            </v-dialog>
+            <v-dialog v-model="resourceStore.resourceDialog" class="dialog-card" scrollable>
+                <v-card prepend-icon="mdi-database" :title="$t('$vuetify.dataIterator.r.title')">
+                    <v-tabs :items="mcpStore.listServerResources()" v-model="resourceStore.tab" color="primary">
+                        <template v-slot:tab="{ item }">
+                            <v-tab :text="item.name" :value="item.name" class="text-none"></v-tab>
+                        </template>
+                    </v-tabs>
+                    <v-divider></v-divider>
+                    <v-card-text>
+                        <v-tabs-window v-model="resourceStore.tab">
+                            <v-tabs-window-item v-for="item in mcpStore.listServerResources()" :value="item.name">
+                                <v-data-iterator :items="resourceStore.resourceTemplatesList" items-per-page="-1"
+                                    @update:options="resourceStore.loadTemplates(item.templatesList)"
+                                    :loading="resourceStore.loadingTemplates">
+                                    <template v-slot:default="{ items }">
+                                        <v-container>
+                                            <v-row dense>
+                                                <v-col v-for="item in items"
+                                                    :key="item.raw.uriTemplate +':'+ item.raw.name" cols="auto"
+                                                    class="flex-fill">
+                                                    <v-card border flat>
+                                                        <v-card-item :subtitle="item.raw.uriTemplate" class="mb-2"
+                                                            :title="item.raw.name">
+                                                        </v-card-item>
+                                                        <v-card-text>{{ item.raw.description }}</v-card-text>
+                                                    </v-card>
+                                                </v-col>
+                                            </v-row>
+                                        </v-container>
+                                    </template>
+                                </v-data-iterator>
+                                <v-data-iterator :items="resourceStore.resourceList" items-per-page="-1"
+                                    @update:options="resourceStore.loadResources(item.list)"
+                                    :loading="resourceStore.loadingResources">
+                                    <template v-slot:default="{ items }">
+                                        <v-container>
+                                            <v-expansion-panels>
+                                                <v-expansion-panel v-for="item in items"
+                                                    :key="item.raw.uri +':'+ item.raw.name"
+                                                    :text="JSON.stringify(item.raw)"
+                                                    :title="item.raw.name +' - '+ item.raw.uri">
+                                                </v-expansion-panel>
+                                            </v-expansion-panels>
+                                        </v-container>
+                                    </template>
+                                </v-data-iterator>
+                            </v-tabs-window-item>
+                        </v-tabs-window>
                     </v-card-text>
                 </v-card>
             </v-dialog>
@@ -1000,10 +1054,25 @@
                     console.log('MCP:', window.mcpServers)
                     return window.mcpServers
                 },
-
             },
 
             actions: {
+                listServerResources: function () {
+                    const mcpServers = this.getServers
+                    const mcpKeys = Object.keys(mcpServers)
+                    const mcpResources = []
+                    for (const key of mcpKeys) {
+                        const resources = mcpServers[key]?.resources
+                        if (resources) {
+                            mcpResources.push({
+                                name: key,
+                                list: resources.list,
+                                templatesList: resources['templates/list']
+                            })
+                        }
+                    }
+                    return mcpResources
+                },
                 loadTools: function () {
                     this.loading = true
                     try {
@@ -1035,7 +1104,8 @@
                         const toolsListFunction = mcpServers[key]?.tools?.list;
                         if (typeof toolsListFunction === 'function') {
                             const tools = await toolsListFunction();
-                            console.log(await mcpServers[key]?.prompts?.list())
+                            // console.log(await mcpServers[key]?.prompts?.list())
+                            // console.log(await mcpServers[key]?.resources['templates/list']())
                             // console.log(await mcpServers[key]?.resources?.list())
                             if (tools && Array.isArray(tools.tools)) {
                                 for (const tool of tools.tools) {
@@ -1291,6 +1361,52 @@
             },
         });
 
+        const useResourceStore = defineStore({
+            id: "resourceStore",
+            state: () => ({
+                resourceDialog: false,
+                tab: null,
+
+                resourceList: [],
+                resourceTemplatesList: [],
+
+                loadingTemplates: false,
+                loadingResources: false,
+            }),
+            actions: {
+                loadTemplates: function (resource_function) {
+                    this.loadingTemplates = true
+                    try {
+                        resource_function().then((result) => {
+                            console.log(result)
+                            this.resourceTemplatesList = result.resourceTemplates
+                            return
+                        })
+                    } catch (error) {
+                        console.error('Failed to load resource templates:', error);
+                    } finally {
+                        this.loadingTemplates = false;
+                    }
+
+                },
+                loadResources: function (resource_function) {
+                    this.loadingResources = true
+                    try {
+                        resource_function().then((result) => {
+                            console.log(result)
+                            this.resourceList = result.resources
+                            return
+                        })
+                    } catch (error) {
+                        console.error('Failed to load resources:', error);
+                    } finally {
+                        this.loadingResources = false;
+                    }
+
+                },
+            },
+        });
+
         const usePromptStore = defineStore({
             id: "promptStore",
             state: () => ({
@@ -1537,6 +1653,7 @@
                 const agentStore = useAgentStore();
                 const settingStore = useSettingStore();
                 const promptStore = usePromptStore();
+                const resourceStore = useResourceStore();
 
                 const { locale } = useI18n({ useScope: 'global' });
 
@@ -2294,6 +2411,7 @@
 
                     settingStore,
                     promptStore,
+                    resourceStore,
                     agentStore,
                     snackbarStore,
                     mcpStore,
@@ -2327,6 +2445,7 @@
                         },
                         l: { title: 'Language' },
                         a: { title: 'Agent' },
+                        r: { title: 'Resources' },
                         g: {
                             new: 'New Conversation',
                             reg: 'Regeneration'
@@ -2367,6 +2486,7 @@
                         title: 'Layout della Query AI',
                         q: { title: 'Cronologia delle Query' },
                         l: { title: 'Lingua' },
+                        r: { title: 'Risorse' },
                         i: {
                             title: 'Configurazione dell\'interfaccia',
                             apikey: 'Chiave API',
@@ -2402,6 +2522,7 @@
                         title: 'AI お問い合わせ',
                         q: { title: '歴史' },
                         l: { title: '言語設定' },
+                        r: { title: '資源' },
                         i: {
                             title: 'インターフェイス構成',
                             apikey: 'API キー',
@@ -2428,6 +2549,7 @@
                         title: 'Layout för AI-frågor',
                         q: { title: 'Frågehistorik' },
                         l: { title: 'Språkinställning' },
+                        r: { title: 'Resurser' },
                         i: {
                             title: 'Konfiguration av gränssnitt',
                             apikey: 'API Nyckel',
@@ -2461,6 +2583,7 @@
                             sheet: 'MCP提示词表单'
                         },
                         a: { title: '智能体' },
+                        r: { title: '资源' },
                         g: {
                             new: '新对话',
                             reg: '重新生成'
