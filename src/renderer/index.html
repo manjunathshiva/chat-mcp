@@ -1443,7 +1443,9 @@
                     const allPrompts = []
                     for (const key of mcpKeys) {
                         const obj = await mcpServers[key]?.prompts?.list();
-                        obj.prompts.forEach(prompt => allPrompts.push({ title: key, ...prompt }));
+                        if (obj) {
+                            obj.prompts.forEach(prompt => allPrompts.push({ title: key, ...prompt }));
+                        }
                     }
 
                     return allPrompts;
