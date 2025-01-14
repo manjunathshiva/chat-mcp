@@ -120,6 +120,22 @@ Alternatively, you can also use another API endpoint that supports function call
     }
     ```
 
+## Build Application
+
+You can build your own desktop application by:
+
+```bash
+npm run build-app
+```
+
+This CLI helps you build and package your application for your current OS, with artifacts stored in the /artifacts directory.
+
+For Debian/Ubuntu users experiencing RPM build issues, try one of the following solutions: 
+
+- Edit `package.json` to skip the RPM build step. Or 
+
+- Install `rpm` using `sudo apt-get install rpm` (You may need to run `sudo apt update` to ensure your package list is up-to-date)
+
 
 ## Troubleshooting
 

@@ -51,16 +51,15 @@
     "devDependencies": {
         "@types/node-notifier": "^8.0.5",
         "copyfiles": "^2.4.1",
-        "electron": "^33.2.1",
-        "electron-builder": "^24.9.1",
+        "electron": "^33.3.1",
+        "electron-builder": "^24.13.3",
         "electron-debug": "^4.1.0",
         "node-notifier": "^10.0.1",
-        "typescript": "^5.7.2"
+        "typescript": "^5.7.3"
     },
     "dependencies": {
-        "@modelcontextprotocol/sdk": "^1.0.4",
-        "@modelcontextprotocol/server-everything": "^0.6.2",
-        "@modelcontextprotocol/server-filesystem": "^0.6.2",
-        "@modelcontextprotocol/server-puppeteer": "^0.6.2"
+        "@modelcontextprotocol/sdk": "^1.1.1",
+        "@modelcontextprotocol/server-everything": "^2025.1.14",
+        "@modelcontextprotocol/server-filesystem": "^2025.1.14"
     }
 }
