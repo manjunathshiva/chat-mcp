@@ -137,9 +137,9 @@ For Debian/Ubuntu users experiencing RPM build issues, try one of the following 
 - Install `rpm` using `sudo apt-get install rpm` (You may need to run `sudo apt update` to ensure your package list is up-to-date)
 
 
-## Troubleshooting
+# Troubleshooting
 
-#### Error: spawn npx ENOENT - [ISSUE 40](https://github.com/modelcontextprotocol/servers/issues/40)
+## Error: spawn npx ENOENT - [ISSUE 40](https://github.com/modelcontextprotocol/servers/issues/40)
 
 Modify the `config.json` in [src/main](src/main)
 
@@ -164,6 +164,13 @@ Please ensure that the provided path is valid, especially if you are using a rel
 
 By default, I will install `server-everything`, `server-filesystem`, and `server-puppeteer` for test purposes. However, you can install additional server libraries or use `npx` to utilize other server libraries as needed.
 
+## Installation timeout
+
+Generally, after executing `npm install` for the entire project, the total size of files in the `node_modules` directory typically exceeds 500MB. 
+
+If the installation process stalls at less than 300MB and the progress bar remains static, it is likely due to a timeout during the installation of the latter part, specifically Electron.
+
+This issue often arises because the download speed from Electron's default server is excessively slow or even inaccessible in certain regions. To resolve this, you can modify the environment or global variable `ELECTRON_MIRROR` to switch to an Electron mirror site that is accessible from your location.
 
 ## Demo
 
