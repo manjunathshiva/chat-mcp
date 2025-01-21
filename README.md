@@ -177,7 +177,7 @@ This issue often arises because the download speed from Electron's default serve
 ### Multimodal Support
 ![](https://gcore.jsdelivr.net/gh/AI-QL/.github/public/chat-mcp/demo-multimodal.png)
 
-### Reasonging and Latex Support
+### Reasoning and Latex Support
 ![](https://gcore.jsdelivr.net/gh/AI-QL/.github/public/chat-mcp/demo-latex.png)
 
 ### MCP Tools Visualization
