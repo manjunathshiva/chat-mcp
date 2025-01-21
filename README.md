@@ -175,19 +175,22 @@ This issue often arises because the download speed from Electron's default serve
 ## Demo
 
 ### Multimodal Support
-![](./demo-multimodal.png)
+![](https://gcore.jsdelivr.net/gh/AI-QL/.github/public/chat-mcp/demo-multimodal.png)
+
+### Reasonging and Latex Support
+![](https://gcore.jsdelivr.net/gh/AI-QL/.github/public/chat-mcp/demo-latex.png)
 
 ### MCP Tools Visualization
-![](./demo-tools.png)
+![](https://gcore.jsdelivr.net/gh/AI-QL/.github/public/chat-mcp/demo-tools.png)
 
 ### MCP Toolcall Process Overview
-![](./demo-toolcall.png)
+![](https://gcore.jsdelivr.net/gh/AI-QL/.github/public/chat-mcp/demo-toolcall.png)
 
 ### MCP Prompts Template
-![](./demo-prompts.png)
+![](https://gcore.jsdelivr.net/gh/AI-QL/.github/public/chat-mcp/demo-prompts.png)
 
 ### Dynamic LLM Config
-![](./demo-llms.png)
+![](https://gcore.jsdelivr.net/gh/AI-QL/.github/public/chat-mcp/demo-llms.png)
 
 ### DevTool Troubleshooting
-![](./demo-devtool.png)
+![](https://gcore.jsdelivr.net/gh/AI-QL/.github/public/chat-mcp/demo-devtool.png)
