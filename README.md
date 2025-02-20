@@ -172,6 +172,14 @@ If the installation process stalls at less than 300MB and the progress bar remai
 
 This issue often arises because the download speed from Electron's default server is excessively slow or even inaccessible in certain regions. To resolve this, you can modify the environment or global variable `ELECTRON_MIRROR` to switch to an Electron mirror site that is accessible from your location.
 
+## Electron builder timeout
+
+When using electron-builder to package files, it automatically downloads several large release packages from GitHub. If the network connection is unstable, this process may be interrupted or timeout.
+
+On Windows, you may need to clear the cache located under the `electron` and `electron-builder` directories within `C:\Users\YOURUSERNAME\AppData\Local` before attempting to retry.
+
+Due to potential terminal permission issues, it is recommended to use the default shell terminal instead of VSCode's built-in terminal.
+
 ## Demo
 
 ### Multimodal Support
