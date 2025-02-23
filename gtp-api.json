@@ -1,0 +1,18 @@
+{
+    "chatbotStore": {
+        "apiKey": "gsk_XXX",
+        "url": "https://api.groq.com/openai",
+        "path": "/v1/chat/completions",
+        "model": "deepseek-r1-distill-llama-70b",
+        "max_tokens_value": "",
+        "mcp": true
+    },
+    "defaultChoiceStore": {
+        "model": [
+            "qwen-2.5-coder-32b",
+            "llama-3.3-70b-versatile",
+            "deepseek-r1-distill-llama-70b",
+            "deepseek-r1-distill-qwen-32b"
+        ]
+    }
+}
